@@ -9,20 +9,18 @@ function GetPresetsFromFolder(folder)
 
     for (var i = 0; i < filesAndFolders.length; i++)
     {
-        var file = filesAndFolders[i];
-
-        if (file instanceof File && file.name.match(/\.ffx$/i))
+        if (filesAndFolders[i] instanceof File && filesAndFolders[i].name.match(".ffx"))
         {
             presets.push(
             {
-                name: file.name.replace(/\.ffx$/, ""),
-                file: file,
+                name: filesAndFolders[i].name.replace(".ffx", ""),
+                file: filesAndFolders[i],
                 isEffect: false
             });
         }
-        else if (file instanceof Folder)
+        else if (filesAndFolders[i] instanceof Folder)
         {
-            presets = presets.concat(GetPresetsFromFolder(file));
+            presets = presets.concat(GetPresetsFromFolder(filesAndFolders[i]));
         }
     }
 
@@ -32,7 +30,7 @@ function GetPresetsFromFolder(folder)
 function GetAllEffectsAndPresets()
 {
     var effectsList = [];
-    var presetsFolder = new Folder(Folder.appPackage.fullName + "/Presets");
+    var presetsFolder = new Folder(Folder.appPackage.fullName + "/Presets"); // {AfterEffects Install Location}/Presets
     var effects = app.effects;
 
     if (presetsFolder.exists)
@@ -42,12 +40,11 @@ function GetAllEffectsAndPresets()
 
     for (var i = 1; i <= effects.length; i++)
     {
-        var effect = effects[i];
-        if (effect)
+        if (effects[i])
         {
             effectsList.push(
             {
-                name: effect.displayName,
+                name: effects[i].displayName,
                 isEffect: true
             });
         }
@@ -101,8 +98,7 @@ function ApplyEffectOrPreset(selectedName)
                 // Apply effect
                 for (var j = 0; j < selectedLayers.length; j++)
                 {
-                    var layer = selectedLayers[j];
-                    layer.property("ADBE Effect Parade").addProperty(EffectsAndPresets[i].name);
+                    selectedLayers[j].property("ADBE Effect Parade").addProperty(EffectsAndPresets[i].name);
                 }
             }
             else
@@ -110,8 +106,7 @@ function ApplyEffectOrPreset(selectedName)
                 // Apply preset
                 for (var j = 0; j < selectedLayers.length; j++)
                 {
-                    var layer = selectedLayers[j];
-                    layer.applyPreset(EffectsAndPresets[i].file);
+                    selectedLayers[j].applyPreset(EffectsAndPresets[i].file);
                 }
             }
 
